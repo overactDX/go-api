@@ -19,6 +19,34 @@ var books = []Book{
 	{ID: "2", Title: "Another Book", Author: "Another Author", Quantity: 3},
 }
 
+func checkoutBook(c *gin.Context) {
+	id := c.Query("id")
+
+	if id == "" {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Missing id query parameter"})
+		return
+	}
+
+	book, err := getBooksByID(c, id)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Book not found"})
+		return
+	}
+
+	if book.Quantity <= 0 {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Book out of stock"})
+		return
+	}
+
+	book.Quantity -= 1
+	c.IndentedJSON(http.StatusOK, book)
+}
+
+func returnBook(c *gin.Context) {
+
+}
+
 func getBooks(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, books)
 }
@@ -61,5 +89,6 @@ func main() {
 	route.GET("/books", getBooks)
 	route.GET("/books/:id", bookById)
 	route.POST("/books", createBooks)
+	route.POST("/checkout", checkoutBook)
 	route.Run("localhost: 1000")
 }
