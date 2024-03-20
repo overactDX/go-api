@@ -89,6 +89,6 @@ func main() {
 	route.GET("/books", getBooks)
 	route.GET("/books/:id", bookById)
 	route.POST("/books", createBooks)
-	route.POST("/checkout", checkoutBook)
+	route.PATCH("/checkout", checkoutBook)
 	route.Run("localhost: 1000")
 }
